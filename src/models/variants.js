@@ -21,10 +21,10 @@ const variantSchema = new mongoose.Schema({
   images: {
     type: String,
   },
-  attributes: {
-    type: Object,
-    default: {},
-  },
+  attributes: [{
+    key: String,
+    value: String,
+  }]
 });
 
 module.exports = mongoose.model("Variant", variantSchema);
