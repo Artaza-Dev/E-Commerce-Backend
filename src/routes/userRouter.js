@@ -2,23 +2,26 @@ const express = require("express");
 const router = express.Router();
 const userModel = require("../models/user");
 const bcrypt = require("bcrypt");
+const adminModel = require("../models/admin");
 const generateToken = require("../utils/generateToken");
-const nodemailer = require("nodemailer");
+// const nodemailer = require("nodemailer");
 // register user
-if (process.env.NODE_ENV === "development") {
   router.post("/createadmin", async function (req, res) {
     try {
-      let owner = await userModel.find({ role: "admin" });
-      if (owner.length > 0) {
+      let { username, email, password, role } = req.body;
+      if (!username || !email || !password || !role) {
+        return res.status(400).json({ message: "All fields are required" });
+      }
+      let admin = await adminModel.find({ role : "admin" });
+      console.log("Creating admin user", admin.length);
+      if (admin.length > 0) {
         return res
           .status(504)
           .send("You don't have permission to create a new owner.");
       }
-      let { username, email, password, role } = req.body;
-      console.log(req.body);
       const salt = await bcrypt.genSalt(10);
       const hashpassword = await bcrypt.hash(password, salt);
-      let createOwner = await userModel.create({
+      let createOwner = await adminModel.create({
         username,
         role,
         email,
@@ -34,7 +37,7 @@ if (process.env.NODE_ENV === "development") {
         .json({ message: "Internal Server Error", error: error.message });
     }
   });
-}
+
 // User Registration Route
 router.post("/register", async (req, res) => {
   try {
@@ -94,10 +97,11 @@ router.post("/login", async (req, res) => {
   }
 });
 // User Logout Route
-router.post("/logout", (req, res)=>{
-    res.clearCookie("token");
-    res.status(200).json({message: "Logout successful"});
-})
+// router.post("/logout", (req, res)=>{
+//     res.clearCookie("token");
+//     res.status(200).json({message: "Logout successful"});
+// })
+
 
 // forgot password
 // const transporter = nodemailer.createTransport({
@@ -110,7 +114,6 @@ router.post("/logout", (req, res)=>{
 //         rejectUnauthorized: false
 //     }
 // })
-
 // router.post("verifyemail", async(req,res)=>{
 //     try {
 //         let {email} = req.body;

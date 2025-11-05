@@ -19,8 +19,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/user", userRouter)
 app.use("/product", productRouter);
 
-console.log("in server.js",process.env.MONGO_URL);
-
 // Database Connection
 mongoose
   .connect(process.env.MONGO_URL)
