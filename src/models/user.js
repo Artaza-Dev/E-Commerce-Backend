@@ -7,28 +7,17 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ["admin", "customer"], default: "customer" },
   addresses: [
     {
-      address: String,
-      city: String,
-      state: String,
-      zip: String,
-      country: String,
-      phone: String,
-      isDefault: { type: Boolean, default: false },
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Address",
     },
   ],
-  coupons: [
-    {
-      couponId: { type: mongoose.Schema.Types.ObjectId, ref: "Coupon" },
-    },
-  ],
+  coupons: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Coupon",
+  },
+
   wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
-  cart: [
-    {
-      productId: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
-      quantity: { type: Number, default: 1 },
-      variantId: { type: mongoose.Schema.Types.ObjectId, ref: "Variant" },
-    },
-  ],
-});
+  cart: { type: mongoose.Schema.Types.ObjectId, ref: "Cart", default: null },
+},{ timestamps: true });
 
 module.exports = mongoose.model("User", userSchema);

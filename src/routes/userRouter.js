@@ -4,7 +4,7 @@ const userModel = require("../models/user");
 const bcrypt = require("bcrypt");
 const adminModel = require("../models/admin");
 const generateToken = require("../utils/generateToken");
-// const nodemailer = require("nodemailer");
+
 // register user
   router.post("/createadmin", async function (req, res) {
     try {
@@ -70,10 +70,13 @@ router.post("/register", async (req, res) => {
       .json({ message: "Internal Server Error", error: error.message });
   }
 });
+
 // User Login Route
 router.post("/login", async (req, res) => {
   try {
     let { email, password } = req.body;
+    console.log("req se pehla",req.body);
+    
     if (!email || !password) {
       return res.status(400).json({ message: "All fields are required" });
     }
@@ -96,12 +99,16 @@ router.post("/login", async (req, res) => {
       .json({ message: "Internal Server Error", error: error.message });
   }
 });
+
 // User Logout Route
 // router.post("/logout", (req, res)=>{
 //     res.clearCookie("token");
 //     res.status(200).json({message: "Logout successful"});
 // })
 
+
+
+module.exports = router;
 
 // forgot password
 // const transporter = nodemailer.createTransport({
@@ -140,5 +147,3 @@ router.post("/login", async (req, res) => {
 //         res.status(500).json({message: "Internal Server Error", error: error.message});
 //     }
 // })
-
-module.exports = router;

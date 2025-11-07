@@ -10,8 +10,9 @@ module.exports = async function isLoggedIn(req, res, next) {
     if (!decode) {
       return res.status(404).json({ message: "User not found" });
     }
+    
     const user = await userModel.findOne({
-      _id: decode._id,
+      _id: decode.userId,
       email: decode.email,
     });
     req.user = user;
