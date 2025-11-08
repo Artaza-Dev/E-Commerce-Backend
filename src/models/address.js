@@ -1,9 +1,8 @@
-// models/Address.js
 const mongoose = require("mongoose");
 
 const addressSchema = new mongoose.Schema(
    {
-      email: { type: String, required: true },
+      fullName: String,
       address: String,
       city: String,
       state: String,

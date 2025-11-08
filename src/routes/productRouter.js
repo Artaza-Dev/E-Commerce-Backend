@@ -180,7 +180,6 @@ router.post("/addtocart", isLoggedIn, async (req, res) => {
         item.productId?.toString() === productId?.toString() &&
         item.variantId?.toString() === variantId?.toString()
     );
-
     if (existingItem) {
       const newQuantity = existingItem.quantity + quantity;
 

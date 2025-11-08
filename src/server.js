@@ -3,7 +3,8 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const productRouter = require("./routes/productRouter");
-const userRouter = require("./routes/userRouter")
+const userRouter = require("./routes/userRouter");
+const addressRouter = require("./routes/addressRouter")
 const cookieParser = require("cookie-parser");
 // Load environment variables
 dotenv.config();
@@ -19,6 +20,8 @@ app.use(cookieParser());
 // Default Route
 app.use("/user", userRouter)
 app.use("/product", productRouter);
+app.use("/address", addressRouter)
+app.use("/order", addressRouter)
 
 // Database Connection
 mongoose

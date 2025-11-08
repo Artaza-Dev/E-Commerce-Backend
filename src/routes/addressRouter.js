@@ -1,14 +1,13 @@
 const express = require("express");
 const router = express.Router();
-const isLoggedIn = require("../middleware/isLoggedIn");
-const userModel = require("../models/userModel");
-const addressModel = require("../models/addressModel");
-
+const isLoggedIn = require("../middlewares/isLoggedIn")
+const userModel = require("../models/user");
+const addressModel = require("../models/address")
 router.post("/createaddress", isLoggedIn, async (req, res) => {
   try {
-    const { email, address, city, state, zip, country, phone } = req.body;
+    const { fullName, address, city, state, zip, country, phone } = req.body;
 
-    if (!email || !address || !city || !state || !zip || !country || !phone) {
+    if ( !fullName || !address || !city || !state || !zip || !country || !phone) {
       return res.status(400).json({ message: "All fields are required" });
     }
 
@@ -18,7 +17,7 @@ router.post("/createaddress", isLoggedIn, async (req, res) => {
     }
 
     const newAddress = await addressModel.create({
-      email,
+      fullName,
       address,
       city,
       state,
@@ -36,6 +35,32 @@ router.post("/createaddress", isLoggedIn, async (req, res) => {
     });
   } catch (error) {
     console.error("Error creating address:", error);
+    res.status(500).json({
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+});
+
+router.get("/getaddresses", isLoggedIn, async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user._id).populate("addresses");
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // agar user ke pass koi address nahi hai
+    if (!user.addresses || user.addresses.length === 0) {
+      return res.status(200).json({ message: "No addresses found", addresses: [] });
+    }
+
+    res.status(200).json({
+      message: "Addresses fetched successfully",
+      addresses: user.addresses,
+    });
+  } catch (error) {
+    console.error("Error fetching addresses:", error);
     res.status(500).json({
       message: "Internal Server Error",
       error: error.message,

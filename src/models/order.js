@@ -1,4 +1,3 @@
-// models/Order.js
 const mongoose = require("mongoose");
 
 const orderItemSchema = new mongoose.Schema({
@@ -19,7 +18,7 @@ const orderSchema = new mongoose.Schema(
     totalAmount: { type: Number, required: true },
     discountAmount: { type: Number, default: 0 },
     couponCode: { type: String },
-    paymentMethod: { type: String, enum: ["COD", "Card", "Bank"], default: "COD" },
+    paymentMethod: { type: String, enum: ["COD"], default: "COD" },
     status: {
       type: String,
       enum: ["Pending", "Processing", "Shipped", "Delivered", "Cancelled"],
