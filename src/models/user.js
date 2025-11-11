@@ -12,10 +12,16 @@ const userSchema = new mongoose.Schema(
         ref: "Address",
       },
     ],
-    coupons: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Coupon",
-    },
+    coupons: [
+      {
+        coupon: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Coupon",
+          required: true,
+        },
+        isUsed: { type: Boolean, default: false },
+      },
+    ],
     wishlist: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     cart: { type: mongoose.Schema.Types.ObjectId, ref: "Cart", default: null },
     orders: [
