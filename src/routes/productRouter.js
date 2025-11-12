@@ -2,14 +2,14 @@ const express = require("express");
 const router = express.Router();
 const uploads = require("../config/multer-config");
 const isLoggedIn = require("../middlewares/isLoggedIn.js");
-const { createProduct, fetchProduct, getproductById, getproductByCategory, addProductToWishlist, getWishlistItems, addProductToCart, getCartItems, deleteCartItems, orderSummery } = require("../controllers/productController.js");
+const { createProduct, fetchProduct, getproductById, getproductByCategory, addProductToWishlist, getWishlistItems, addProductToCart, getCartItems, deleteCartItems, orderSummery, productReview } = require("../controllers/productController.js");
 
 
 // Create a new product
 router.post("/createproduct", uploads.array("images", 3), createProduct);
 
 // Get all products with their variants
-router.get("/fetchproducts", fetchProduct);
+router.post("/fetchproducts", fetchProduct);
 
 // Get product in product details page by ID
 router.get("/getproduct/:id", getproductById);
@@ -30,5 +30,7 @@ router.get("/cartitems", isLoggedIn, getCartItems);
 router.get("/deletecartitems/:id", isLoggedIn, deleteCartItems);
 
 router.post("/summary", isLoggedIn, orderSummery)
+
+router.post("/review", isLoggedIn, productReview)
 
 module.exports = router;

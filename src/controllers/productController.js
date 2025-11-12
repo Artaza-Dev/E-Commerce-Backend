@@ -1,6 +1,4 @@
 const productModel = require("../models/product");
-const uploads = require("../config/multer-config");
-const isLoggedIn = require("../middlewares/isLoggedIn.js");
 const wishListModel = require("../models/wishlist.js");
 const userModel = require("../models/user.js");
 const cartModel = require("../models/cart.js");
@@ -41,17 +39,17 @@ module.exports.createProduct = async (req, res) => {
   }
 }
 
-
 module.exports.fetchProduct = async (req, res) => {
   try {
-    const products = await productModel.find({}).lean();
-
+    const { page, limit } = req.query; 
+    const pageNumber = parseInt(page) || 1;
+    const limitNumber = parseInt(limit) || 4;
+    const products = await productModel.paginate({}, { page, limit });
     res.status(200).json({ products });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
-}
-
+};
 
 module.exports.getproductById = async (req, res) => {
   try {
@@ -145,7 +143,10 @@ module.exports.getWishlistItems = async (req, res) => {
 
 module.exports.addProductToCart = async (req, res) => {
   try {
+    console.log('in add to cart', req.body);
     const { productId, variantId, quantity, variantMaxQuantity } = req.body;
+    console.log('user in add to cart', req.user);
+    
     const userId = req.user._id;
 
     if (!productId || !variantId || !quantity || !variantMaxQuantity) {
@@ -349,3 +350,66 @@ module.exports.orderSummery = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 }
+
+module.exports.productReview = async (req, res) => {
+  try {
+    let user = req.user;
+    const { productId, rating, comment } = req.body;
+    if (!productId || !rating || !comment) {
+      return res.status(400).json({
+        success: false,
+        message: "Product ID, rating, and comment are required.",
+      });
+    }
+
+    let authUser = await userModel.findOne({ _id: user._id });
+    if (!authUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found.",
+      });      
+    }
+    let product = await productModel.findById(productId);
+    if(!product){
+      return res.status(404).json({
+        success: false,
+        message: "Product not found.",
+      }); 
+    }
+
+    let existingReviewIndex = product.reviews.findIndex((rev)=> rev.user.toString() ===  authUser._id.toString());
+    if(existingReviewIndex !== -1){
+      product.reviews[existingReviewIndex].rating = rating;
+      product.reviews[existingReviewIndex].comment = comment;
+    }else{
+      const newReview ={
+        user: authUser._id,
+        name: authUser.username,
+        rating: Number(rating),
+        comment,
+      }
+      product.reviews.push(newReview);
+    }
+
+    product.numOfReviews = product.reviews.length;
+    product.ratings =
+      product.reviews.reduce((acc, item) => item.rating + acc, 0)
+      product.reviews.length;
+
+    await product.save({ validateBeforeSave: false });
+
+    res.status(200).json({
+      success: true,
+      message: "Review submitted successfully.",
+      product,
+    });
+
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Internal Server Error",
+      error: error.message,
+    });
+  }
+};

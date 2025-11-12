@@ -99,3 +99,8 @@ module.exports.loginUser = async (req, res) => {
       .json({ message: "Internal Server Error", error: error.message });
   }
 }
+
+module.exports.logoutUser =  (req, res)=>{
+    res.clearCookie("token");
+    res.status(200).json({message: "Logout successful"});
+}

@@ -6,11 +6,12 @@ const cartModel = require("../models/cart");
 module.exports.createOrder = async (req, res) => {
   try {
     let user = req.user;
-    let{ discountAmount, items, paymentMethod, shippingAddress, totalAmount } = req.body;
-    
-    let authUser = await userModel.findOne({_id: user._id});
-    if(!authUser){
-        return res.status(401).json({message: "Unauthorized User"})
+    let { discountAmount, items, paymentMethod, shippingAddress, totalAmount } =
+      req.body;
+
+    let authUser = await userModel.findOne({ _id: user._id });
+    if (!authUser) {
+      return res.status(401).json({ message: "Unauthorized User" });
     }
     let newOrder = await orderModel.create({
       userId: user._id,
@@ -18,8 +19,8 @@ module.exports.createOrder = async (req, res) => {
       totalAmount,
       discountAmount,
       shippingAddress,
-      paymentMethod
-    })
+      paymentMethod,
+    });
     if (authUser.cart) {
       await cartModel.findByIdAndDelete(authUser.cart);
       authUser.cart = null;
@@ -28,7 +29,7 @@ module.exports.createOrder = async (req, res) => {
     authUser.orders.push(newOrder._id);
     await authUser.save();
 
-     res.status(201).json({
+    res.status(201).json({
       success: true,
       message: "Order placed successfully!",
       order: newOrder,
@@ -40,9 +41,9 @@ module.exports.createOrder = async (req, res) => {
       error: error.message,
     });
   }
-}
+};
 
-module.exports.getOrders =  async (req, res) => {
+module.exports.getOrders = async (req, res) => {
   try {
     const user = req.user;
     const userOrders = await userModel
@@ -53,13 +54,12 @@ module.exports.getOrders =  async (req, res) => {
     if (!userOrders) {
       return res.status(404).json({ message: "User not found" });
     }
-    
+
     res.status(200).json({
       success: true,
       message: "Orders fetched successfully",
       orders: userOrders.orders,
     });
-
   } catch (error) {
     console.error("Error fetching orders:", error);
     res.status(500).json({
@@ -68,7 +68,7 @@ module.exports.getOrders =  async (req, res) => {
       error: error.message,
     });
   }
-}
+};
 
 module.exports.updateOrderStatus = async (req, res) => {
   try {
@@ -108,11 +108,12 @@ module.exports.updateOrderStatus = async (req, res) => {
       order,
     });
   } catch (error) {
-    console.error("Error updating order status:", error);
     res.status(500).json({
       success: false,
       message: "Internal Server Error",
       error: error.message,
     });
   }
-}
+};
+
+
