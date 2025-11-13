@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-
-const { createAdmin, registerUser, loginUser, logoutUser } = require("../controllers/userController")
+const isLoggedIn = require("../middlewares/isLoggedIn")
+const { createAdmin, registerUser, loginUser, logoutUser, fetchMe } = require("../controllers/userController")
 // register user
 router.post("/createadmin", createAdmin);
 
@@ -13,6 +13,8 @@ router.post("/login", loginUser);
 
 // User Logout Route
 router.post("/logout", logoutUser)
+
+router.get("/mydata", isLoggedIn, fetchMe);
 
 module.exports = router;
 

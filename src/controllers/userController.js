@@ -104,3 +104,8 @@ module.exports.logoutUser =  (req, res)=>{
     res.clearCookie("token");
     res.status(200).json({message: "Logout successful"});
 }
+
+module.exports.fetchMe = async (req, res) => {
+  const user = await userModel.findById(req.user._id).select("-password");
+  res.status(200).json({ user });
+}

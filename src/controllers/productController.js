@@ -132,10 +132,7 @@ module.exports.getWishlistItems = async (req, res) => {
     const wishlistItems = await wishListModel
       .find({ userId: req.user._id })
       .populate("product");
-    if (!wishlistItems.length) {
-      return res.status(404).json({ message: "No items found in wishlist" });
-    }
-    res.status(200).json({ message: "Wishlist items fetch successfully" ,wishlistItems });
+    res.status(200).json({ message: "Wishlist items fetch successfully" ,wishlistItems: wishlistItems || [] });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });
   }
@@ -188,7 +185,6 @@ module.exports.addProductToCart = async (req, res) => {
       }
 
       existingItem.quantity = newQuantity;
-      console.log("Quantity increased:", existingItem.quantity);
     } else {
       // Add as new cart item
       if (quantity > variantMaxQuantity) {
@@ -201,7 +197,7 @@ module.exports.addProductToCart = async (req, res) => {
       cart.items.push({ productId, variantId, quantity });
     }
 
-    // 💾 Save updates
+    // Save updates
     await cart.save();
 
     res.status(200).json({
@@ -319,10 +315,11 @@ module.exports.deleteCartItems = async (req, res) => {
       });
     }
     cart.items = cart.items.filter((item) => item._id.toString() !== itemId);
+    console.log("delete items..", cart.items);
     await cart.save();
     res
       .status(200)
-      .json({ success: true, message: "Cart item deleted successfully" });
+      .json({ success: true, message: "Cart item deleted successfully", cart: cart });
   } catch (error) {
     res
       .status(500)
