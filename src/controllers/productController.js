@@ -41,10 +41,14 @@ module.exports.createProduct = async (req, res) => {
 
 module.exports.fetchProduct = async (req, res) => {
   try {
-    const { page, limit } = req.query; 
-    const pageNumber = parseInt(page) || 1;
-    const limitNumber = parseInt(limit) || 4;
-    const products = await productModel.paginate({}, { page, limit });
+    const pageNumber = parseInt(req.query.page) || 1;
+    const limitNumber = parseInt(req.query.limit) || 4;
+
+    const products = await productModel.paginate({}, {
+      page: pageNumber,
+      limit: limitNumber,
+    });
+
     res.status(200).json({ products });
   } catch (error) {
     res.status(500).json({ message: "Server Error", error: error.message });

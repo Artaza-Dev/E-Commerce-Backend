@@ -9,7 +9,7 @@ const { createProduct, fetchProduct, getproductById, getproductByCategory, addPr
 router.post("/createproduct", uploads.array("images", 3), createProduct);
 
 // Get all products with their variants
-router.post("/fetchproducts", fetchProduct);
+router.get("/fetchproducts", fetchProduct);
 
 // Get product in product details page by ID
 router.get("/getproduct/:id", getproductById);

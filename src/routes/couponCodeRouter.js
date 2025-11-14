@@ -50,7 +50,7 @@ router.get("/mycoupons", isLoggedIn, async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.json(user.coupons);
+    res.json({coupon: user.coupons});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
