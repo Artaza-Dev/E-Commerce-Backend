@@ -30,7 +30,7 @@ const productSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     brand: { type: String },
-    category: { type: String, required: true },
+    category: { type: String, enum:["Smartphone" ,"Laptop" ,"Tablet" ,"Smartwatch" ,"Headphone" ], required: true },
     baseprice: { type: Number },
     description: { type: String },
     images: [{ type: String }],

@@ -32,7 +32,7 @@ module.exports.createAddress = async (req, res) => {
       address: newAddress,
     });
   } catch (error) {
-    console.error("Error creating address:", error);
+    e.error("Error creating address:", error);
     res.status(500).json({
       message: "Internal Server Error",
       error: error.message,

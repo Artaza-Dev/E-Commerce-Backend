@@ -1,4 +1,3 @@
-const adminModel = require("../models/admin");
 const userModel = require("../models/user");
 const bcrypt = require("bcrypt");
 const generateToken = require("../utils/generateToken");
@@ -9,7 +8,7 @@ module.exports.createAdmin = async function (req, res) {
     if (!username || !email || !password || !role) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    let admin = await adminModel.find({ role: "admin" });
+    let admin = await userModel.find({ role: "admin" });
     console.log("Creating admin user", admin.length);
     if (admin.length > 0) {
       return res
@@ -18,7 +17,7 @@ module.exports.createAdmin = async function (req, res) {
     }
     const salt = await bcrypt.genSalt(10);
     const hashpassword = await bcrypt.hash(password, salt);
-    let createOwner = await adminModel.create({
+    let createOwner = await userModel.create({
       username,
       role,
       email,

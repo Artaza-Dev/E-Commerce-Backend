@@ -3,8 +3,9 @@ const router = express.Router();
 const isLoggedIn = require("../middlewares/isLoggedIn")
 const couponCodeModel = require("../models/coupon-code")
 const userModel = require("../models/user")
+const { checkRole } = require("../middlewares/roleBaseAccess")
 
-router.post("/createcoupon", async (req, res) => {
+router.post("/createcoupon",isLoggedIn , checkRole(['admin']), async (req, res) => {
   try {
     const { code, discountValue } = req.body;
 
@@ -82,9 +83,10 @@ router.post("/applycoupon", isLoggedIn, async (req, res) => {
       (item) => item.coupon.code.toUpperCase() === code.toUpperCase()
     );
 
-    if (!userCoupon)
+    if (!userCoupon){
+      console.log("This coupon is not assigned to you");
       return res.status(403).json({ message: "This coupon is not assigned to you" });
-
+    }
     if (userCoupon.isUsed)
       return res.status(400).json({ message: "Coupon already used" });
 
@@ -101,7 +103,7 @@ router.post("/applycoupon", isLoggedIn, async (req, res) => {
       discount,
     });
   } catch (error) {
-    res.status(500).json({ message: "Error applying coupon", error: error.message });
+    res.status(500).json({ success: false, message: "Error applying coupon", error: error.message });
   }
 });
 

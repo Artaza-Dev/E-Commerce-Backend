@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/user");
-// dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+
 module.exports = async function isLoggedIn(req, res, next) {
   try {
     if (!req.cookies.token) {

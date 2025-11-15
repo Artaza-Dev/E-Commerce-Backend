@@ -2,12 +2,12 @@ const express = require("express");
 const router = express.Router();
 const isLoggedIn = require("../middlewares/isLoggedIn")
 const { createOrder, getOrders, updateOrderStatus } = require("../controllers/orderController");
-
+const {checkRole} = require("../middlewares/roleBaseAccess")
 router.post("/createorder", isLoggedIn, createOrder);
 
 router.get("/getorder", isLoggedIn, getOrders);
 
-router.put("/updatestatus/:orderId", isLoggedIn, updateOrderStatus);
+router.put("/updatestatus/:orderId", isLoggedIn,checkRole(['admin']), updateOrderStatus);
 
 
 

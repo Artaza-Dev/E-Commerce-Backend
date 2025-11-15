@@ -21,6 +21,22 @@ module.exports.createOrder = async (req, res) => {
       shippingAddress,
       paymentMethod,
     });
+
+    if(!newOrder){
+      return res.status(400).json({message: "Error to create order"})
+    }
+
+    for (const item of newOrder.items) {
+        const product = await productModel.findById(item.productId);
+        if (!product) continue;
+
+        const variant = product.variants.id(item.variantId);
+        if (variant) {
+          variant.quantity = Math.max(0, variant.quantity - item.quantity);
+        }
+        await product.save();
+      }
+
     if (authUser.cart) {
       await cartModel.findByIdAndDelete(authUser.cart);
       authUser.cart = null;
@@ -34,6 +50,7 @@ module.exports.createOrder = async (req, res) => {
       message: "Order placed successfully!",
       order: newOrder,
     });
+
   } catch (error) {
     console.error("Error creating address:", error);
     res.status(500).json({
@@ -88,19 +105,19 @@ module.exports.updateOrderStatus = async (req, res) => {
     order.status = status;
     await order.save();
 
-    if (status === "Shipped") {
-      for (const item of order.items) {
-        const product = await productModel.findById(item.productId);
-        if (!product) continue;
+    // if (status === "Shipped") {
+    //   for (const item of order.items) {
+    //     const product = await productModel.findById(item.productId);
+    //     if (!product) continue;
 
-        const variant = product.variants.id(item.variantId);
-        if (variant) {
-          variant.quantity = Math.max(0, variant.quantity - item.quantity);
-        }
+    //     const variant = product.variants.id(item.variantId);
+    //     if (variant) {
+    //       variant.quantity = Math.max(0, variant.quantity - item.quantity);
+    //     }
 
-        await product.save();
-      }
-    }
+    //     await product.save();
+    //   }
+    // }
 
     res.status(200).json({
       success: true,

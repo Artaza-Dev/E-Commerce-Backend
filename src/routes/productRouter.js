@@ -3,10 +3,10 @@ const router = express.Router();
 const uploads = require("../config/multer-config");
 const isLoggedIn = require("../middlewares/isLoggedIn.js");
 const { createProduct, fetchProduct, getproductById, getproductByCategory, addProductToWishlist, getWishlistItems, addProductToCart, getCartItems, deleteCartItems, orderSummery, productReview } = require("../controllers/productController.js");
-
+const {checkRole} = require("../middlewares/roleBaseAccess.js")
 
 // Create a new product
-router.post("/createproduct", uploads.array("images", 3), createProduct);
+router.post("/createproduct", isLoggedIn , checkRole(['admin']), uploads.array("images", 3), createProduct);
 
 // Get all products with their variants
 router.get("/fetchproducts", fetchProduct);
